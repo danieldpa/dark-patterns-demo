@@ -81,15 +81,6 @@ const Home = createIcon(
   </>,
 )
 
-const MousePointerClick = createIcon(
-  <>
-    <path d="m5 3 9 18 2-7 6-2Z" />
-    <path d="M13 13 20 6" />
-    <path d="M9 1v3" />
-    <path d="M1 9h3" />
-  </>,
-)
-
 const ShieldAlert = createIcon(
   <>
     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
@@ -115,13 +106,40 @@ const XCircle = createIcon(
 )
 
 const screens = [
-  { id: 'home', label: 'Inicio', icon: Home },
+  { id: 'home', label: 'Início', icon: Home },
   { id: 'cookies', label: 'Cookies', icon: Cookie },
   { id: 'compra', label: 'Compra', icon: ShoppingCart },
   { id: 'cancelamento', label: 'Cancelamento', icon: XCircle },
   { id: 'contrato', label: 'Li e Aceito', icon: FileText },
-  { id: 'juridico', label: 'Analise Juridica', icon: Gavel },
+  { id: 'juridico', label: 'Análise Jurídica', icon: Gavel },
 ]
+
+const publishedUrl = 'https://dark-patterns-demo.vercel.app'
+
+function isLocalAddress(hostname) {
+  return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1'
+}
+
+function getDemoUrl() {
+  if (typeof window === 'undefined') {
+    return `${publishedUrl}/?demo=1`
+  }
+
+  const baseUrl = isLocalAddress(window.location.hostname)
+    ? publishedUrl
+    : `${window.location.origin}${window.location.pathname}`
+  const url = new URL(baseUrl)
+  url.searchParams.set('demo', '1')
+  return url.toString()
+}
+
+function startsInDemoMode() {
+  if (typeof window === 'undefined') {
+    return false
+  }
+
+  return new URLSearchParams(window.location.search).get('demo') === '1'
+}
 
 function Reveal({ children, className = '' }) {
   return <div className={`reveal ${className}`}>{children}</div>
@@ -161,14 +179,47 @@ function ChoiceButton({ children, variant = 'primary', onClick }) {
   )
 }
 
+function QrLanding({ demoUrl, onStart }) {
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=16&data=${encodeURIComponent(demoUrl)}`
+
+  return (
+    <main className="qr-landing">
+      <section className="qr-content" aria-labelledby="qr-title">
+        <div className="qr-copy">
+          <Badge>Acesso da turma</Badge>
+          <h1 id="qr-title">Dark Patterns na prática</h1>
+          <p>
+            Escaneie o QR Code para abrir a simulação no celular e testar as telas interativas.
+          </p>
+          <div className="qr-actions">
+            <ChoiceButton onClick={onStart}>Entrar neste dispositivo</ChoiceButton>
+            <a className="text-link" href={demoUrl}>Abrir link direto</a>
+          </div>
+        </div>
+
+        <div className="qr-panel">
+          <img className="qr-code" src={qrUrl} alt="QR Code para acessar o site de Dark Patterns" />
+          <div className="link-box">
+            <span>Link do teste</span>
+            <strong>{demoUrl}</strong>
+          </div>
+          <p className="qr-note">
+            Ao abrir pelo QR Code, a página vai direto para as simulações.
+          </p>
+        </div>
+      </section>
+    </main>
+  )
+}
+
 function HomeScreen({ setScreen }) {
   return (
     <div className="screen-grid home-grid">
       <Card>
-        <Badge>Experimento de sala</Badge>
+        <Badge>Experimento interativo</Badge>
         <h1>Dark Patterns e o "Li e Aceito"</h1>
         <p className="lead">
-          Este site simula interfaces que parecem oferecer escolha, mas conduzem o usuario para uma decisao ja desejada pela plataforma.
+          Este site simula interfaces que parecem oferecer escolha, mas conduzem o usuário para uma decisão já desejada pela plataforma.
         </p>
         <div className="question-box">
           <p>Pergunta central:</p>
@@ -177,21 +228,8 @@ function HomeScreen({ setScreen }) {
           </p>
         </div>
         <div className="button-row">
-          <ChoiceButton onClick={() => setScreen('cookies')}>Comecar simulacao</ChoiceButton>
-          <ChoiceButton variant="secondary" onClick={() => setScreen('juridico')}>Ver analise juridica</ChoiceButton>
-        </div>
-      </Card>
-
-      <Card className="dark-card">
-        <MousePointerClick className="card-icon" size={36} />
-        <h2>Como usar em apresentacao</h2>
-        <p>
-          Mostre primeiro as telas sem explicar. Peca para a turma decidir. Depois revele onde estava a manipulacao.
-        </p>
-        <div className="steps">
-          <p>1. A turma escolhe rapidamente.</p>
-          <p>2. Voce mostra o padrao manipulativo.</p>
-          <p>3. Voce conecta com vontade, informacao e boa-fe.</p>
+          <ChoiceButton onClick={() => setScreen('cookies')}>Começar simulação</ChoiceButton>
+          <ChoiceButton variant="secondary" onClick={() => setScreen('juridico')}>Ver análise jurídica</ChoiceButton>
         </div>
       </Card>
     </div>
@@ -204,19 +242,19 @@ function CookiesScreen({ setScreen }) {
   return (
     <div className="screen-grid two-column">
       <Card>
-        <Badge>Simulacao 1</Badge>
+        <Badge>Simulação 1</Badge>
         <h2>Tela de cookies</h2>
-        <p className="muted">Escolha uma opcao como se estivesse acessando um site real.</p>
+        <p className="muted">Escolha uma opção como se estivesse acessando um site real.</p>
 
         <div className="simulation-box">
           <Cookie className="simulation-icon" size={34} />
-          <h3>Queremos melhorar sua experiencia</h3>
+          <h3>Queremos melhorar sua experiência</h3>
           <p>
-            Usamos cookies para personalizar conteudo, anuncios e analisar trafego. Ao continuar, voce concorda com nossos termos.
+            Usamos cookies para personalizar conteúdo, anúncios e analisar tráfego. Ao continuar, você concorda com nossos termos.
           </p>
           <div className="button-row">
             <ChoiceButton onClick={() => setReveal(true)}>Aceitar e continuar</ChoiceButton>
-            <ChoiceButton variant="hidden" onClick={() => setReveal(true)}>configurar opcoes</ChoiceButton>
+            <ChoiceButton variant="hidden" onClick={() => setReveal(true)}>configurar opções</ChoiceButton>
           </div>
         </div>
       </Card>
@@ -224,20 +262,20 @@ function CookiesScreen({ setScreen }) {
       <Card>
         <h3>O que observar</h3>
         {!reveal ? (
-          <p className="muted">Clique em uma das opcoes para revelar a analise.</p>
+          <p className="muted">Clique em uma das opções para revelar a análise.</p>
         ) : (
           <Reveal>
             <div className="warning-box">
               <AlertTriangle size={20} />
               <div>
                 <p>Dark pattern: hierarquia visual manipulada</p>
-                <span>O botao de aceitar e grande e destacado. A opcao de configurar aparece como texto pequeno e pouco visivel.</span>
+                <span>O botão de aceitar é grande e destacado. A opção de configurar aparece como texto pequeno e pouco visível.</span>
               </div>
             </div>
             <p className="body-text">
-              A escolha existe formalmente, mas a interface empurra o usuario para aceitar tudo. Isso fragiliza a ideia de consentimento livre e informado.
+              A escolha existe formalmente, mas a interface empurra o usuário para aceitar tudo. Isso fragiliza a ideia de consentimento livre e informado.
             </p>
-            <ChoiceButton onClick={() => setScreen('compra')}>Proxima simulacao</ChoiceButton>
+            <ChoiceButton onClick={() => setScreen('compra')}>Próxima simulação</ChoiceButton>
           </Reveal>
         )}
       </Card>
@@ -247,12 +285,12 @@ function CookiesScreen({ setScreen }) {
 
 function CompraScreen({ setScreen }) {
   const [step, setStep] = useState(1)
-  const price = step === 1 ? 'R$ 49,90' : 'R$ 49,90 + taxa de servico R$ 12,90'
+  const price = step === 1 ? 'R$ 49,90' : 'R$ 49,90 + taxa de serviço R$ 12,90'
 
   return (
     <div className="screen-grid two-column">
       <Card>
-        <Badge>Simulacao 2</Badge>
+        <Badge>Simulação 2</Badge>
         <h2>Compra online</h2>
         <div className="checkout-box">
           <div className="checkout-heading">
@@ -266,7 +304,7 @@ function CompraScreen({ setScreen }) {
           <div className="price-box">
             <p>Total apresentado</p>
             <strong>{price}</strong>
-            {step > 1 && <span>Renovacao automatica: R$ 89,90/mes apos o periodo inicial.</span>}
+            {step > 1 && <span>Renovação automática: R$ 89,90/mês após o período inicial.</span>}
           </div>
 
           {step === 1 ? (
@@ -281,7 +319,7 @@ function CompraScreen({ setScreen }) {
               </label>
               <div className="button-row">
                 <ChoiceButton onClick={() => setStep(3)}>Finalizar compra</ChoiceButton>
-                <ChoiceButton variant="hidden" onClick={() => setStep(3)}>remover opcoes adicionais</ChoiceButton>
+                <ChoiceButton variant="hidden" onClick={() => setStep(3)}>remover opções adicionais</ChoiceButton>
               </div>
             </div>
           )}
@@ -289,24 +327,24 @@ function CompraScreen({ setScreen }) {
       </Card>
 
       <Card>
-        <h3>Analise</h3>
+        <h3>Análise</h3>
         {step < 3 ? (
-          <p className="muted">Avance a simulacao para revelar os problemas.</p>
+          <p className="muted">Avance a simulação para revelar os problemas.</p>
         ) : (
           <Reveal>
             <div className="warning-box list-box">
               <div>
                 <p>Dark patterns encontrados</p>
                 <ul>
-                  <li>Preco real aparece apenas no fim.</li>
-                  <li>Checkbox vem pre-marcado.</li>
-                  <li>Renovacao automatica fica pouco destacada.</li>
-                  <li>Remover opcoes adicionais e menos visivel que finalizar.</li>
+                  <li>Preço real aparece apenas no fim.</li>
+                  <li>Checkbox vem pré-marcado.</li>
+                  <li>Renovação automática fica pouco destacada.</li>
+                  <li>Remover opções adicionais é menos visível que finalizar.</li>
                 </ul>
               </div>
             </div>
             <p className="body-text">
-              A interface cria uma decisao cansativa e assimetrica: aceitar e facil, revisar e dificil.
+              A interface cria uma decisão cansativa e assimétrica: aceitar é fácil, revisar é difícil.
             </p>
             <ChoiceButton onClick={() => setScreen('cancelamento')}>Ir para cancelamento</ChoiceButton>
           </Reveal>
@@ -319,16 +357,16 @@ function CompraScreen({ setScreen }) {
 function CancelamentoScreen({ setScreen }) {
   const [stage, setStage] = useState(1)
   const messages = {
-    1: 'Tem certeza que deseja cancelar? Voce perdera todos os beneficios exclusivos.',
-    2: 'Antes de sair, escolha um motivo. Sem isso nao conseguimos concluir.',
-    3: 'Ultima chance: fique por mais 30 dias com desconto especial.',
+    1: 'Tem certeza que deseja cancelar? Você perderá todos os benefícios exclusivos.',
+    2: 'Antes de sair, escolha um motivo. Sem isso não conseguimos concluir.',
+    3: 'Última chance: fique por mais 30 dias com desconto especial.',
   }
 
   return (
     <div className="screen-grid two-column">
       <Card>
-        <Badge>Simulacao 3</Badge>
-        <h2>Cancelamento dificil</h2>
+        <Badge>Simulação 3</Badge>
+        <h2>Cancelamento difícil</h2>
         <div className="simulation-box">
           <ShieldAlert className="simulation-icon" size={34} />
           <h3>{messages[stage]}</h3>
@@ -336,14 +374,14 @@ function CancelamentoScreen({ setScreen }) {
             <select className="select-field">
               <option>Selecione um motivo</option>
               <option>Muito caro</option>
-              <option>Nao uso mais</option>
+              <option>Não uso mais</option>
               <option>Outro</option>
             </select>
           )}
           <div className="button-row">
             <ChoiceButton onClick={() => setStage(Math.min(stage + 1, 3))}>Continuar assinatura</ChoiceButton>
             <ChoiceButton variant="danger" onClick={() => (stage < 3 ? setStage(stage + 1) : setScreen('contrato'))}>
-              Sim, quero perder meus beneficios
+              Sim, quero perder meus benefícios
             </ChoiceButton>
           </div>
         </div>
@@ -353,12 +391,12 @@ function CancelamentoScreen({ setScreen }) {
         <h3>O que isso demonstra</h3>
         <div className="stack body-text">
           <p>
-            Contratar costuma ser rapido. Cancelar, porem, pode ser transformado em um caminho longo, emocional e confuso.
+            Contratar costuma ser rápido. Cancelar, porém, pode ser transformado em um caminho longo, emocional e confuso.
           </p>
           <div className="warning-box list-box">
             <div>
-              <p>Dark pattern: obstrucao</p>
-              <span>A plataforma cria barreiras para impedir ou atrasar uma decisao que deveria ser simples.</span>
+              <p>Dark pattern: obstrução</p>
+              <span>A plataforma cria barreiras para impedir ou atrasar uma decisão que deveria ser simples.</span>
             </div>
           </div>
           <ChoiceButton onClick={() => setScreen('contrato')}>Ir para "Li e Aceito"</ChoiceButton>
@@ -374,18 +412,18 @@ function ContratoScreen({ setScreen }) {
   return (
     <div className="screen-grid two-column">
       <Card>
-        <Badge>Simulacao 4</Badge>
-        <h2>Contrato eletronico</h2>
+        <Badge>Simulação 4</Badge>
+        <h2>Contrato eletrônico</h2>
         <div className="contract-box">
           <h3>Termos de uso</h3>
           <div className="terms-box">
-            Ao prosseguir, voce declara que leu e concorda com todos os termos, incluindo politica de dados, renovacao automatica, compartilhamento com parceiros, alteracao unilateral de condicoes, limitacoes de responsabilidade, cobrancas futuras e demais disposicoes aplicaveis...
-            <span>Clausula 18.3: informacoes adicionais podem ser usadas para fins comerciais conforme disponibilidade da plataforma...</span>
+            Ao prosseguir, você declara que leu e concorda com todos os termos, incluindo política de dados, renovação automática, compartilhamento com parceiros, alteração unilateral de condições, limitações de responsabilidade, cobranças futuras e demais disposições aplicáveis...
+            <span>Cláusula 18.3: informações adicionais podem ser usadas para fins comerciais conforme disponibilidade da plataforma...</span>
           </div>
-          <p className="tiny">Role para ler tudo, mas o botao ja esta disponivel.</p>
+          <p className="tiny">Role para ler tudo, mas o botão já está disponível.</p>
           <div className="button-row">
             <ChoiceButton onClick={() => setAccepted(true)}>Li e aceito</ChoiceButton>
-            <ChoiceButton variant="hidden" onClick={() => setAccepted(true)}>ler versao completa</ChoiceButton>
+            <ChoiceButton variant="hidden" onClick={() => setAccepted(true)}>ler versão completa</ChoiceButton>
           </div>
         </div>
       </Card>
@@ -393,17 +431,17 @@ function ContratoScreen({ setScreen }) {
       <Card>
         <h3>Resultado</h3>
         {!accepted ? (
-          <p className="muted">Clique em uma opcao para ver a analise.</p>
+          <p className="muted">Clique em uma opção para ver a análise.</p>
         ) : (
           <Reveal>
             <div className="danger-box">
               <p>Problema central</p>
-              <span>O clique foi registrado, mas a interface dificultou a compreensao real do conteudo aceito.</span>
+              <span>O clique foi registrado, mas a interface dificultou a compreensão real do conteúdo aceito.</span>
             </div>
             <p className="body-text">
-              O "Li e Aceito" nao pode ser analisado sozinho. E preciso observar o contexto: clareza, acesso as clausulas, liberdade de recusa e ausencia de manipulacao.
+              O "Li e Aceito" não pode ser analisado sozinho. É preciso observar o contexto: clareza, acesso às cláusulas, liberdade de recusa e ausência de manipulação.
             </p>
-            <ChoiceButton onClick={() => setScreen('juridico')}>Ver conclusao juridica</ChoiceButton>
+            <ChoiceButton onClick={() => setScreen('juridico')}>Ver conclusão jurídica</ChoiceButton>
           </Reveal>
         )}
       </Card>
@@ -413,25 +451,19 @@ function ContratoScreen({ setScreen }) {
 
 function JuridicoScreen() {
   const points = [
-    { icon: CheckCircle2, title: 'Vontade livre', text: 'A decisao precisa ser tomada sem pressao, inducao ou obstaculo artificial.' },
-    { icon: CheckCircle2, title: 'Informacao clara', text: 'O usuario precisa compreender pontos essenciais antes de aceitar.' },
-    { icon: CheckCircle2, title: 'Boa-fe objetiva', text: 'A interface deve agir com transparencia, nao como armadilha visual.' },
+    { icon: CheckCircle2, title: 'Vontade livre', text: 'A decisão precisa ser tomada sem pressão, indução ou obstáculo artificial.' },
+    { icon: CheckCircle2, title: 'Informação clara', text: 'O usuário precisa compreender pontos essenciais antes de aceitar.' },
+    { icon: CheckCircle2, title: 'Boa-fé objetiva', text: 'A interface deve agir com transparência, não como armadilha visual.' },
   ]
 
   return (
     <div className="screen-grid law-grid">
       <Card className="dark-card">
         <Gavel className="card-icon" size={36} />
-        <h2>Conclusao</h2>
+        <h2>Conclusão</h2>
         <p className="lead-dark">
-          Dark patterns nao anulam automaticamente todo contrato, mas podem tornar questionavel a validade do consentimento.
+          Dark patterns não anulam automaticamente todo contrato, mas podem tornar questionável a validade do consentimento.
         </p>
-        <div className="quote-box">
-          <p>Frase para apresentar:</p>
-          <p>
-            "O clique prova que houve interacao, mas nao prova sozinho que houve vontade livre, informada e consciente."
-          </p>
-        </div>
       </Card>
 
       <div className="points-grid">
@@ -456,15 +488,31 @@ function JuridicoScreen() {
 
 export default function DarkPatternsDemo() {
   const [screen, setScreen] = useState('home')
+  const [showLanding, setShowLanding] = useState(() => !startsInDemoMode())
   const current = useMemo(() => screens.find((item) => item.id === screen), [screen])
+  const demoUrl = useMemo(() => getDemoUrl(), [])
+
+  function startDemo() {
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href)
+      url.searchParams.set('demo', '1')
+      window.history.replaceState(null, '', url)
+    }
+
+    setShowLanding(false)
+  }
+
+  if (showLanding) {
+    return <QrLanding demoUrl={demoUrl} onStart={startDemo} />
+  }
 
   return (
     <div className="app-shell">
       <div className="app-container">
         <header className="app-header">
           <div>
-            <p>Trabalho de Legislacao em Informatica</p>
-            <h1>Dark Patterns na pratica</h1>
+            <p>Trabalho de Legislação em Informática</p>
+            <h1>Dark Patterns na prática</h1>
           </div>
           <div className="current-screen">
             Tela atual: {current?.label}
