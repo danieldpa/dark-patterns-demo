@@ -544,6 +544,68 @@
   gap: 1rem;
 }
 
+.law-content {
+  display: grid;
+  gap: 1rem;
+}
+
+.law-extra {
+  display: grid;
+  gap: 1rem;
+}
+
+.law-toggle {
+  width: fit-content;
+  border: 1px solid #cbd5e1;
+  border-radius: 1rem;
+  background: #fff;
+  color: #334155;
+  padding: 0.85rem 1rem;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.law-toggle:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  transform: translateY(-1px);
+}
+
+.law-more-box {
+  border-left: 0.3rem solid #0f172a;
+  border-radius: 0.9rem;
+  background: #eef2f7;
+  padding: 1rem 1.1rem;
+  color: #334155;
+  font-style: italic;
+  line-height: 1.7;
+}
+
+.law-more-box p {
+  margin: 0;
+}
+
+.reference-section {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 1rem;
+}
+
+.reference-section h3 {
+  margin: 0;
+  color: #020617;
+  font-size: 1.45rem;
+  line-height: 1.05;
+}
+
+.reference-section p {
+  margin: 0.6rem 0 0;
+  color: #64748b;
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
 .point-row {
   display: flex;
   gap: 1rem;

@@ -275,6 +275,9 @@ function CookiesScreen({ setScreen }) {
             <p className="body-text">
               A escolha existe formalmente, mas a interface empurra o usuário para aceitar tudo. Isso fragiliza a ideia de consentimento livre e informado.
             </p>
+            <p className="body-text">
+              Quando a interface induz uma escolha específica, o consentimento obtido pode conter vício de erro, fragilizando sua validade jurídica (Schreiber, 2020).
+            </p>
             <ChoiceButton onClick={() => setScreen('compra')}>Próxima simulação</ChoiceButton>
           </Reveal>
         )}
@@ -337,6 +340,7 @@ function CompraScreen({ setScreen }) {
                 <p>Dark patterns encontrados</p>
                 <ul>
                   <li>Preço real aparece apenas no fim.</li>
+                  <li>Revelar o preço real apenas no fim pode configurar lesão — defeito que compromete a validade do contrato (Schreiber, 2020).</li>
                   <li>Checkbox vem pré-marcado.</li>
                   <li>Renovação automática fica pouco destacada.</li>
                   <li>Remover opções adicionais é menos visível que finalizar.</li>
@@ -441,6 +445,9 @@ function ContratoScreen({ setScreen }) {
             <p className="body-text">
               O "Li e Aceito" não pode ser analisado sozinho. É preciso observar o contexto: clareza, acesso às cláusulas, liberdade de recusa e ausência de manipulação.
             </p>
+            <p className="body-text">
+              Um clique obtido por interface manipulada pode configurar vício de consentimento por dolo, tornando o negócio jurídico anulável (Schreiber, 2020).
+            </p>
             <ChoiceButton onClick={() => setScreen('juridico')}>Ver conclusão jurídica</ChoiceButton>
           </Reveal>
         )}
@@ -450,10 +457,12 @@ function ContratoScreen({ setScreen }) {
 }
 
 function JuridicoScreen() {
+  const [showMore, setShowMore] = useState(false)
   const points = [
     { icon: CheckCircle2, title: 'Vontade livre', text: 'A decisão precisa ser tomada sem pressão, indução ou obstáculo artificial.' },
     { icon: CheckCircle2, title: 'Informação clara', text: 'O usuário precisa compreender pontos essenciais antes de aceitar.' },
     { icon: CheckCircle2, title: 'Boa-fé objetiva', text: 'A interface deve agir com transparência, não como armadilha visual.' },
+    { icon: CheckCircle2, title: 'Dolo e anulabilidade', text: 'Interfaces que usam artifício para induzir o usuário a aceitar o que não aceitaria configuram dolo — defeito que pode tornar o negócio jurídico anulável (Schreiber, 2020).' },
   ]
 
   return (
@@ -466,21 +475,48 @@ function JuridicoScreen() {
         </p>
       </Card>
 
-      <div className="points-grid">
-        {points.map((point) => {
-          const Icon = point.icon
-          return (
-            <Card key={point.title}>
-              <div className="point-row">
-                <div className="point-icon"><Icon size={22} /></div>
-                <div>
-                  <h3>{point.title}</h3>
-                  <p>{point.text}</p>
+      <div className="law-content">
+        <div className="points-grid">
+          {points.map((point) => {
+            const Icon = point.icon
+            return (
+              <Card key={point.title}>
+                <div className="point-row">
+                  <div className="point-icon"><Icon size={22} /></div>
+                  <div>
+                    <h3>{point.title}</h3>
+                    <p>{point.text}</p>
+                  </div>
                 </div>
-              </div>
-            </Card>
-          )
-        })}
+              </Card>
+            )
+          })}
+        </div>
+
+        <div className="law-extra">
+          <button
+            type="button"
+            className="law-toggle"
+            onClick={() => setShowMore((current) => !current)}
+          >
+            {showMore ? 'Fechar ▲' : 'Saiba mais ▼'}
+          </button>
+
+          {showMore && (
+            <div className="law-more-box">
+              <p>
+                Dark patterns são interfaces projetadas para manipular escolhas. Quando isso acontece, o consentimento registrado pode ser inválido — a vontade declarada não reflete a vontade real do usuário.
+              </p>
+            </div>
+          )}
+
+          <section className="reference-section">
+            <h3>Referência</h3>
+            <p>
+              SCHREIBER, Anderson. <em>Manual de direito civil: contemporâneo</em>. 3. ed. São Paulo: Saraiva Educação, 2020.
+            </p>
+          </section>
+        </div>
       </div>
     </div>
   )
