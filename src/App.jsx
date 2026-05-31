@@ -221,12 +221,6 @@ function HomeScreen({ setScreen }) {
         <p className="lead">
           Este site simula interfaces que parecem oferecer escolha, mas conduzem o usuário para uma decisão já desejada pela plataforma.
         </p>
-        <div className="question-box">
-          <p>Pergunta central:</p>
-          <p>
-            O clique em "aceito" representa uma vontade livre ou apenas o resultado de uma interface manipulada?
-          </p>
-        </div>
         <div className="button-row">
           <ChoiceButton onClick={() => setScreen('cookies')}>Começar simulação</ChoiceButton>
           <ChoiceButton variant="secondary" onClick={() => setScreen('juridico')}>Ver análise jurídica</ChoiceButton>
@@ -457,12 +451,11 @@ function ContratoScreen({ setScreen }) {
 }
 
 function JuridicoScreen() {
-  const [showMore, setShowMore] = useState(false)
   const points = [
     { icon: CheckCircle2, title: 'Vontade livre', text: 'A decisão precisa ser tomada sem pressão, indução ou obstáculo artificial.' },
     { icon: CheckCircle2, title: 'Informação clara', text: 'O usuário precisa compreender pontos essenciais antes de aceitar.' },
     { icon: CheckCircle2, title: 'Boa-fé objetiva', text: 'A interface deve agir com transparência, não como armadilha visual.' },
-    { icon: CheckCircle2, title: 'Dolo e anulabilidade', text: 'Interfaces que usam artifício para induzir o usuário a aceitar o que não aceitaria configuram dolo — defeito que pode tornar o negócio jurídico anulável (Schreiber, 2020).' },
+    { icon: CheckCircle2, title: 'Dolo e anulabilidade', text: 'Interfaces que usam artifício para induzir o usuário a aceitar o que não aceitaria configuram dolo, defeito que pode tornar o negócio jurídico anulável.' },
   ]
 
   return (
@@ -494,22 +487,6 @@ function JuridicoScreen() {
         </div>
 
         <div className="law-extra">
-          <button
-            type="button"
-            className="law-toggle"
-            onClick={() => setShowMore((current) => !current)}
-          >
-            {showMore ? 'Fechar ▲' : 'Saiba mais ▼'}
-          </button>
-
-          {showMore && (
-            <div className="law-more-box">
-              <p>
-                Dark patterns são interfaces projetadas para manipular escolhas. Quando isso acontece, o consentimento registrado pode ser inválido — a vontade declarada não reflete a vontade real do usuário.
-              </p>
-            </div>
-          )}
-
           <section className="reference-section">
             <h3>Referência</h3>
             <p>
